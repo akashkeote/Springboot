@@ -12,7 +12,7 @@ import com.episode.second.episode2.classes_mine.Engine;
 public class Main {
 
 	public static void main(String[] args) {
-		 //SpringApplication.run(Main.class, args);
+		// SpringApplication.run(Main.class, args);
 		ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
 
 		Car car = context.getBean("car", Car.class);

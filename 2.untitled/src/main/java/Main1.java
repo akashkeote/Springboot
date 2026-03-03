@@ -7,19 +7,19 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * Q: config1.xml mein kya different hai config.xml se?
  * A: Injection technique alag hai:
- *    - config.xml: <property> tag (Setter Injection)
- *    - config1.xml: <constructor-arg> tag (Constructor Injection)
+ * - config.xml: <property> tag (Setter Injection)
+ * - config1.xml: <constructor-arg> tag (Constructor Injection)
  *
  * Q: Constructor injection ka advantage kya hai?
  * A: - Mandatory dependencies ke liye best practice
- *    - Field ko final bana sakte ho (immutable)
- *    - Object creation time hi dependency inject hoti hai
- *    - Thread-safe by default
+ * - Field ko final bana sakte ho (immutable)
+ * - Object creation time hi dependency inject hoti hai
+ * - Thread-safe by default
  *
  * Q: getBean() call ke baad kuch kyun nahi kiya?
  * A: Constructor mein hi service methods call ho gaye!
- *    Constructor injection mein dependency set hote hi logic execute ho gaya
- *    Output console mein directly print ho gaya
+ * Constructor injection mein dependency set hote hi logic execute ho gaya
+ * Output console mein directly print ho gaya
  *
  * ====================================================================
  */
