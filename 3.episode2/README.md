@@ -1,120 +1,279 @@
-# Episode 2 - Spring Boot Dependency Injection (XML Config)
+# Episode 2 - Spring Dependency Injection Complete Guide
 
-## Overview
-This is a Spring Boot tutorial project demonstrating **Dependency Injection (DI)** using **XML-based configuration** along with **component scanning** and **autowiring annotations**.
+## 🎯 Overview
 
-## What's Happening Here?
+This project demonstrates all **3 types of Spring Dependency Injection** with separate examples, each with their own:
+- ✅ Main class
+- ✅ Config file
+- ✅ Package structure
 
-This project shows how Spring Framework manages object dependencies automatically. Instead of manually creating objects, Spring injects them where needed.
+Perfect for learning DI patterns!
 
-### Key Concepts:
+---
 
-1. **Component Scanning**: The `config.xml` uses `<context:component-scan>` to automatically detect and register Spring beans from the `com.episode.second.episode2.classes` package.
+## 📚 Three Injection Types
 
-2. **Autowiring**: The `@Autowired` annotation in the `Car` class automatically injects an `Engine` bean into the `setEngine()` method.
+### 1️⃣ **Constructor Injection** ✅ BEST PRACTICE
 
-3. **Bean Registration**: Classes are marked with `@Component` annotation, making them eligible for Spring to manage them.
+**File:** `Main1ConstructorInjection.java` + `config1.xml`
 
-## Project Structure
+**Package:** `com.episode.second.episode2.constructor`
+
+**Run:**
+```bash
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main1ConstructorInjection"
+```
+
+**How it works:**
+```java
+@Component("carConstructor")
+public class CarConstructorInjection {
+    private final EngineConstructorInjection engine;
+
+    @Autowired
+    public CarConstructorInjection(EngineConstructorInjection engine) {
+        this.engine = engine;  // ✅ Injected via constructor
+    }
+}
+```
+
+**Pros:**
+- ✅ Immutability (use `final` keyword)
+- ✅ Fail-fast if dependency missing
+- ✅ Easy to test (pass mock in constructor)
+- ✅ Clear dependency visibility
+
+**Cons:**
+- More verbose code
+
+**Output:**
+```
+═══ CONSTRUCTOR INJECTION (Best Practice) ═══
+✅ Engine Type: V8 Turbo
+✅ Engine HP: 500
+✨ BEST PRACTICE: Use constructor for required deps!
+```
+
+---
+
+### 2️⃣ **Setter Injection** ⚠️ FOR OPTIONAL DEPS
+
+**File:** `Main2SetterInjection.java` + `config2.xml`
+
+**Package:** `com.episode.second.episode2.setter`
+
+**Run:**
+```bash
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main2SetterInjection"
+```
+
+**How it works:**
+```java
+@Component("carSetter")
+public class CarSetterInjection {
+    private EngineSetterInjection engine;
+
+    @Autowired
+    public void setEngine(EngineSetterInjection engine) {
+        this.engine = engine;  // ⚠️ Injected via setter
+    }
+}
+```
+
+**Pros:**
+- Optional dependencies
+- Flexible - can change after creation
+- Can use @Qualifier for specific beans
+
+**Cons:**
+- ❌ No immutability
+- ❌ NullPointerException risk
+- ❌ No guarantee of dependency presence
+
+**Output:**
+```
+═══ SETTER INJECTION (Optional Dependencies) ═══
+✅ Engine Type: V8
+✅ Engine HP: 300
+⚠️  Use setter for OPTIONAL dependencies only!
+```
+
+---
+
+### 3️⃣ **Field Injection** ❌ AVOID IN PRODUCTION
+
+**File:** `Main3FieldInjection.java` + `config3.xml`
+
+**Package:** `com.episode.second.episode2.field`
+
+**Run:**
+```bash
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main3FieldInjection"
+```
+
+**How it works:**
+```java
+@Component("carField")
+public class CarFieldInjection {
+    
+    @Autowired
+    private EngineFieldInjection engine;  // ❌ Direct field injection
+}
+```
+
+**Pros:**
+- Concise code
+- Minimal boilerplate
+
+**Cons:**
+- ❌ Hard to test (needs reflection)
+- ❌ Hidden dependencies
+- ❌ NullPointerException risk
+- ❌ No immutability
+
+**Output:**
+```
+═══ FIELD INJECTION (Avoid in Production!) ═══
+✅ Engine Type: V6
+✅ Engine HP: 300
+⛔ AVOID: Hard to test, use Constructor instead!
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 3.episode2/
 ├── src/main/
-│   ├── java/
-│   │   └── com/episode/second/episode2/
-│   │       ├── Main.java              (Entry point)
-│   │       └── classes/
-│   │           ├── Car.java           (Has an Engine dependency)
-│   │           └── Engine.java        (Engine component)
+│   ├── java/com/episode/second/episode2/
+│   │   ├── Main1ConstructorInjection.java
+│   │   ├── Main2SetterInjection.java
+│   │   ├── Main3FieldInjection.java
+│   │   │
+│   │   ├── constructor/
+│   │   │   ├── CarConstructorInjection.java
+│   │   │   └── EngineConstructorInjection.java
+│   │   │
+│   │   ├── setter/
+│   │   │   ├── CarSetterInjection.java
+│   │   │   └── EngineSetterInjection.java
+│   │   │
+│   │   └── field/
+│   │       ├── CarFieldInjection.java
+│   │       └── EngineFieldInjection.java
+│   │
 │   └── resources/
-│       ├── config.xml                 (Spring XML configuration)
-│       └── application.properties      (Spring Boot properties)
-└── pom.xml                             (Maven configuration)
+│       ├── config1.xml    (Constructor config)
+│       ├── config2.xml    (Setter config)
+│       ├── config3.xml    (Field config)
+│       └── application.properties
+│
+└── pom.xml
 ```
-
-## Classes
-
-### `Engine.java`
-```java
-@Component("engine")
-public class Engine {
-    private String type = "V8";
-    
-    // Getters and setters
-}
-```
-- Registered as a Spring bean with name "engine"
-- Default engine type is "V8"
-
-### `Car.java`
-```java
-@Component("car")
-public class Car {
-    private Engine engine;
-    
-    @Autowired
-    public void setEngine(Engine engine) {
-        this.engine = engine;
-    }
-}
-```
-- Registered as a Spring bean with name "car"
-- Engine dependency is autowired via setter injection
-
-### `Main.java`
-Entry point that:
-1. Loads Spring context from `config.xml`
-2. Retrieves Car and Engine beans from the context
-3. Displays the engine type
-
-## How It Works
-
-1. **Main.java creates ApplicationContext** → `ClassPathXmlApplicationContext("config.xml")`
-   - This loads the XML configuration file from classpath
-   - ApplicationContext is the Spring container that manages all beans
-   
-2. **Spring loads `config.xml`** → Initializes component scanning
-   - `<context:component-scan>` scans the specified package
-   
-3. **Component scanning finds Car.java and Engine.java** → Creates beans
-   - Classes with `@Component` annotation become Spring beans
-   
-4. **Spring injects Engine into Car** → Autowiring happens
-   - `@Autowired` annotation triggers dependency injection
-   
-5. **Main retrieves beans from context** → Demonstrates the injection
-   - `context.getBean("car", Car.class)` retrieves the Car bean
-   - `context.getBean("engine", Engine.class)` retrieves the Engine bean
-
-## Running the Application
-
-```bash
-mvn clean install
-mvn spring-boot:run
-```
-
-Or run the `Main` class directly from your IDE.
-
-## Expected Output
-```
-Car's Autowired Engine: V8
-Direct Engine Bean: V8
-```
-
-## Technologies Used
-- **Java 25** (as per pom.xml)
-- **Spring Boot 4.0.3**
-- **Spring Framework** (XML-based DI)
-- **Maven** (Build tool)
-
-## Learning Points
-
-✅ How Spring manages bean lifecycle  
-✅ XML configuration for Spring  
-✅ Component scanning with annotations  
-✅ Setter injection using @Autowired  
-✅ Accessing beans from ApplicationContext  
 
 ---
 
-*This project is from a Spring Framework tutorial series.*
+## 🔧 Config Files
+
+Each injection type has its own config file with separate component scanning:
+
+**config1.xml** - Constructor Injection:
+```xml
+<context:component-scan base-package="com.episode.second.episode2.constructor" />
+```
+
+**config2.xml** - Setter Injection:
+```xml
+<context:component-scan base-package="com.episode.second.episode2.setter" />
+```
+
+**config3.xml** - Field Injection:
+```xml
+<context:component-scan base-package="com.episode.second.episode2.field" />
+```
+
+---
+
+## 🚀 Quick Start
+
+Run any example from IDE:
+1. Right-click `Main1ConstructorInjection.java` → Run
+2. Right-click `Main2SetterInjection.java` → Run
+3. Right-click `Main3FieldInjection.java` → Run
+
+Or from terminal:
+```bash
+mvn clean compile
+
+# Constructor
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main1ConstructorInjection"
+
+# Setter
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main2SetterInjection"
+
+# Field
+mvn exec:java -Dexec.mainClass="com.episode.second.episode2.Main3FieldInjection"
+```
+
+---
+
+## 📊 Comparison Table
+
+| Feature | Constructor ✅ | Setter ⚠️ | Field ❌ |
+|---------|---|---|---|
+| Immutability | ✅ Yes (final) | ❌ No | ❌ No |
+| Testability | ✅ Easy | ⚠️ Medium | ❌ Hard |
+| Clear Dependencies | ✅ Visible | ⚠️ Setter | ❌ Hidden |
+| Required Dependencies | ✅ Enforced | ❌ Optional | ❌ Optional |
+| Circular Dependency Detection | ✅ Early | ⚠️ Late | ❌ Possible issue |
+| NullPointerException Risk | ❌ None | ⚠️ Yes | ⚠️ Yes |
+| Production Use | ✅ YES | ⚠️ Sometimes | ❌ NO |
+
+---
+
+## 🎓 Learning Points
+
+✅ How Spring manages bean lifecycle  
+✅ XML-based component scanning  
+✅ Three different DI approaches  
+✅ When to use each injection type  
+✅ Comparing DI patterns  
+✅ Best practices for dependency injection  
+
+---
+
+## 💡 Key Takeaway
+
+**Always use Constructor Injection by default!**
+
+- Makes dependencies explicit
+- Enables immutability
+- Easy to unit test
+- Recommended by Spring team
+- Exception thrown immediately if dependency missing
+
+Use Setter Injection only for optional dependencies.
+
+Avoid Field Injection in production code.
+
+---
+
+## 🔗 Additional Resources
+
+- See `SIMPLE_GUIDE.md` for quick reference
+- See `DEPENDENCY_INJECTION_GUIDE.md` for detailed guide
+- Run the examples to see DI in action!
+
+---
+
+## 📝 Technologies
+
+- **Java 25** - Latest Java version
+- **Spring Boot 4.0.3** - Latest Spring Boot
+- **Spring Framework** - XML-based DI
+- **Maven** - Build & dependency management
+
+---
+
+*Episode 2 - Spring Dependency Injection Deep Dive Tutorial*

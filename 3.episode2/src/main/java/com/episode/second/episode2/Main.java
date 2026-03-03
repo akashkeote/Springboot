@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.episode.second.episode2.classes.Car;
-import com.episode.second.episode2.classes.Engine;
+import com.episode.second.episode2.classes_mine.Car;
+import com.episode.second.episode2.classes_mine.Engine;
 
 @SpringBootApplication
 public class Main {

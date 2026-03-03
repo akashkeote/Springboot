@@ -1,4 +1,4 @@
-package com.episode.second.episode2.classes;
+package com.episode.second.episode2.classes_mine;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
