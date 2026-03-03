@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    ==================== CONSTRUCTOR INJECTION XML CONFIG ====================
+
+    Q: <constructor-arg> tag ka kya kaam hai?
+    A: Spring ko batata hai ki constructor ke parameter mein konsa bean inject karna hai
+       ref="service1" → service1 bean ko constructor argument mein pass karo
+
+    Q: Setter injection vs Constructor injection difference?
+    A: Setter: <property name="..." ref="..."/>
+       Constructor: <constructor-arg ref="..."/>
+
+       Setter: setUserService() method call hota hai
+       Constructor: UserController1(UserService1 service1) call hota hai
+
+    Q: Multiple constructor-arg kaise handle karte hain?
+    A: Order se ya index se:
+       <constructor-arg index="0" ref="service1"/>
+       <constructor-arg index="1" ref="anotherService"/>
+       Ya naam se:
+       <constructor-arg name="service1" ref="service1"/>
+
+    ====================================================================
+    -->
+
+    <!-- Step 1: Define UserService1 bean -->
+    <bean id="service1" class="Project2_Constructur_Injection_XML.UserService1"/>
+
+    <!-- Step 2: Define UserController1 bean with Constructor Injection -->
+    <bean id="controller1" class="Project2_Constructur_Injection_XML.UserController1">
+        <!--
+            Constructor Injection:
+            Spring will call: new UserController1(service1)
+        -->
+        <constructor-arg ref="service1"/>
+    </bean>
+
+
+</beans>

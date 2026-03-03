@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    ==================== IMPORTANT DOUBTS & CONCEPTS ====================
+    
+    Q1: XML ke sath annotations kyun nahi lagate?
+    A: XML aur Annotation-based config do alag approaches hain:
+       - XML: Purana tareeka, sab kuch XML mein define karo
+       - Annotations (@Service, @Component): Naya tareeka, code mein define karo
+       Dono ek sath nahi use karte - confusion hota hai!
+    
+    Q2: Bean ka id "service" kyun rakha?
+    A: Yeh tumhari choice hai! Koi bhi meaningful naam de sakte ho.
+       Bas dhyan rakho: Main.java mein same id use karna padega
+       Example: container.getBean("service", UserService.class)
+    
+    Q3: Property name "userService" kyun hai?
+    A: Yeh setter method se derive hota hai (JavaBeans Convention):
+       - Setter method: setUserService()
+       - Remove "set": UserService
+       - Lowercase first letter: userService
+       RULE: Property name = setter method name minus "set"
+       Agar setter setMyService() hota to property name="myService" hota!
+    
+    Q4: ref="service" ka matlab?
+    A: ref = reference to another bean
+       Yeh batata hai ki konsa bean inject karna hai
+       "service" bean ko inject karo "userService" property mein
+    ====================================================================
+    -->
+
+    <!-- Step 1: UserService bean define karo -->
+     <!-- Empty bean - no dependencies needed -->
+   <bean id="service" class="Project1_Setter_Injection_XML.UserService">
+       
+    </bean>
+
+    <!-- Step 2: UserController bean with Setter Injection -->
+      <!-- 
+            Setter Injection using <property> tag
+            name="userService" -> Spring will call setUserService() method
+            ref="service" -> Inject the bean with id="service"
+        -->
+   <bean id="controller" class="Project1_Setter_Injection_XML.UserController">
+      
+        <property name="userService" ref="service"/>
+    </bean>
+
+</beans>
