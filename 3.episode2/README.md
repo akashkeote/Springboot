@@ -69,10 +69,22 @@ Entry point that:
 
 ## How It Works
 
-1. **Spring loads `config.xml`** → Initializes component scanning
-2. **Component scanning finds Car.java and Engine.java** → Creates beans
-3. **Spring injects Engine into Car** → Autowiring happens
-4. **Main retrieves beans** → Demonstrates the injection
+1. **Main.java creates ApplicationContext** → `ClassPathXmlApplicationContext("config.xml")`
+   - This loads the XML configuration file from classpath
+   - ApplicationContext is the Spring container that manages all beans
+   
+2. **Spring loads `config.xml`** → Initializes component scanning
+   - `<context:component-scan>` scans the specified package
+   
+3. **Component scanning finds Car.java and Engine.java** → Creates beans
+   - Classes with `@Component` annotation become Spring beans
+   
+4. **Spring injects Engine into Car** → Autowiring happens
+   - `@Autowired` annotation triggers dependency injection
+   
+5. **Main retrieves beans from context** → Demonstrates the injection
+   - `context.getBean("car", Car.class)` retrieves the Car bean
+   - `context.getBean("engine", Engine.class)` retrieves the Engine bean
 
 ## Running the Application
 
