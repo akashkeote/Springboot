@@ -47,5 +47,8 @@ public List<Student> getAllStudents() {
 List<Student >dg = new DummyDataGenerator().generateStudentList();
   return dg;
 }
+
+//now lets talk about {messag} URI path vairable
+
     
 }

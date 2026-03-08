@@ -54,6 +54,8 @@ Path: `practice/src/main/java/com/substring/foodie/controller`
 
 - `UserController`
 - `StudentController`
+- `UriPathVariable`
+- `QueryParameter`
 - `RestaurantController` (placeholder)
 - `OrderController` (placeholder)
 
@@ -114,6 +116,32 @@ Controller: `StudentController` with base mapping `/student`
 
 2. `GET /student/all`
 - Returns list of dummy students generated from `DummyDataGenerator`
+
+### URI path variable endpoint
+
+Controller: `UriPathVariable` with base mapping `/uri`
+
+1. `GET /uri/{message}/for/{name}`
+- Example: `GET /uri/Welcome/for/Akash`
+- Example response: `Hello Akash, Welcome`
+- Uses `@PathVariable("message")` and `@PathVariable String name`
+
+### Query parameter endpoints
+
+Controller: `QueryParameter` with base mapping `/query`
+
+1. `GET /query/message?msg=Hello%20World`
+- `msg` query parameter is read using `@RequestParam("msg")`
+- Response format: `You sent the message: <msg>`
+
+2. `GET /query/message2?msg=Hello%20World&sender=Akash`
+- Reads two query params: `msg` and `sender`
+- `msg` has a configured `defaultValue = "jay"` in current code
+- Response format: `Message from <sender>: <msg>`
+
+Quick difference for revision:
+- `@PathVariable`: value comes from URL path segment
+- `@RequestParam`: value comes after `?` in query string
 
 ## 7. JPA Entity Relationship Revision
 
@@ -184,6 +212,10 @@ Revision note:
 - `password` is plain text in responses/examples
 - In real project, never expose password in API response
 
+5. URI/Query testing errors
+- If path variables are missing or route format is wrong, endpoint will not match (404)
+- If required query params are missing, request can fail with 400
+
 ## 10. How To Run
 
 Git Bash:
@@ -204,6 +236,7 @@ cd "C:\Users\Akash\Desktop\New folder (2)\Springboot\26_Spring MVC_Modern_way\pr
 
 - I can explain difference between `@Controller` and `@RestController`.
 - I can map all current URLs and expected response type.
+- I can explain `@PathVariable` vs `@RequestParam` with examples.
 - I understand `User` <-> `Restaurant` one-to-many.
 - I understand `User` <-> `RoleEntity` many-to-many.
 - I can debug immutable list error in student endpoint.
