@@ -1,0 +1,124 @@
+package com.transactional.spring.Dao;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.transactional.spring.entities.Category;
+import com.transactional.spring.entities.Course;
+
+@Component
+@Repository
+public class CourseDao {
+       @Autowired
+       JdbcTemplate jt;
+
+       @Autowired
+       CategoryDao categoryDao;
+
+       public void saveCourseInBatch(List<Course> courses) {
+              String query = "insert into course (courseId, courseTitle, courseDescription,coursePrice,categoryId) values(?,?,?,?,?)";
+
+              jt.batchUpdate(query, courses, courses.size(), (ps, c) -> {
+                     ps.setInt(1, c.getCourseId());
+                     ps.setString(2, c.getCourseTitle());
+                     ps.setString(3, c.getCourseDescription());
+                     ps.setInt(4, c.getCoursePrice());
+                     ps.setInt(5, c.getCategoryId());
+              });
+              System.out.println("Batch insert completed. Rows affected: " + courses.size());
+       }
+
+       public Course insert(Course c) {
+              String query = "insert into course (courseId, courseTitle, courseDescription,coursePrice,categoryId) values(?,?,?,?,?) "
+                            + "on duplicate key update courseTitle=values(courseTitle), "
+                            + "courseDescription=values(courseDescription), "
+                            + "coursePrice=values(coursePrice), categoryId=values(categoryId)";
+              int row = jt.update(query,
+                            c.getCourseId(),
+                            c.getCourseTitle(),
+                            c.getCourseDescription(),
+                            c.getCoursePrice(),
+                            c.getCategoryId());
+
+              System.out.println("Course inserted successfully " + row);
+              return c;
+       }
+
+       public Course get(int id) {
+              String q = "select * from course where courseId = ?";
+              return jt.queryForObject(q, (rs, rowNum) -> {
+                     Course c = new Course();
+                     c.setCourseId(rs.getInt("courseId"));
+                     c.setCourseTitle(rs.getString("courseTitle"));
+                     c.setCourseDescription(rs.getString("courseDescription"));
+                     c.setCoursePrice(rs.getInt("coursePrice"));
+                     c.setCategoryId(rs.getInt("categoryId"));
+                     return c;
+              }, id);
+       }
+
+       public List<Course> getAllCou() {
+              String q = "select * from course";
+              List<Course> list = jt.query(q, (rs, rowNum) -> {
+                     Course c = new Course();
+                     c.setCourseId(rs.getInt("courseId"));
+                     c.setCourseTitle(rs.getString("courseTitle"));
+                     c.setCourseDescription(rs.getString("courseDescription"));
+                     c.setCoursePrice(rs.getInt("coursePrice"));
+                     c.setCategoryId(rs.getInt("categoryId"));
+                     return c;
+              });
+              return list;
+
+       }
+
+       public Course update(Course c) {
+              String q = "update course set courseTitle=?,courseDescription=?,coursePrice=?,categoryId=? where courseId=?";
+              int row = jt.update(q, c.getCourseTitle(), c.getCourseDescription(), c.getCoursePrice(),
+                            c.getCategoryId(), c.getCourseId());
+              System.out.println("Data updated successfully " + row);
+              return c;
+       }
+
+       public Course delete(Course c, int id) {
+              String q = "delete from course where courseId = ?";
+              jt.update(q, id);
+              System.out.println("Data deleted successfully " + c.getCourseId() + " " + c.getCourseTitle() + " "
+                            + c.getCourseDescription() + " " + c.getCoursePrice() + " " + c.getCategoryId());
+              return c;
+       }
+
+       public List<Course> getCourseByCategoryId(int catid) {
+              String q = "select * from course where categoryId=?";
+              List<Course> list = jt.query(q, (rs, rowNum) -> {
+                     Course c = new Course();
+                     c.setCourseId(rs.getInt("courseId"));
+                     c.setCourseTitle(rs.getString("courseTitle"));
+                     c.setCourseDescription(rs.getString("courseDescription"));
+                     c.setCoursePrice(rs.getInt("coursePrice"));
+                     c.setCategoryId(rs.getInt("categoryId"));
+                     return c;
+              }, catid);
+              return list;
+       }
+
+       // insert course in batch
+       @Transactional
+       public void saveCategoryThanCourse(Category category, Course course) {
+              // inserting category: code
+              // create category query
+              // jdbc fire: update
+              categoryDao.set(category);
+
+              // insert course
+              // create course query
+              // jdbc template ki help se fire
+              insert(course);
+       }
+
+}
